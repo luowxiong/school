@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间 -->
+<mapper namespace="com.luowx.mapper.UserMapper">
+
+    <resultMap id="userMap" type="User">
+        <id property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+        <result property="sex" column="sex"/>
+        <result property="question" column="question"/>
+        <result property="answer" column="answer"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="classId" column="class_id"/>
+    </resultMap>
+
+    <resultMap id="userAndClassesMap" type="User">
+        <id property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+        <result property="sex" column="sex"/>
+        <result property="question" column="question"/>
+        <result property="answer" column="answer"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="classId" column="cid"/>
+        <association property="classes" javaType="Classes">
+            <id property="classId" column="cid"/>
+            <result property="className" column="class_name"/>
+            <result property="stuCount" column="stuCount"/>
+            <result property="headmaster" column="headmaster"/>
+        </association>
+    </resultMap>
+    <sql id="userAndClasses">
+        user_id,username,password,sex,question,answer,class_name,role,s_user.class_id cid
+    </sql>
+
+    <update id="updateUser">
+        update s_user set username=#{username},sex=#{sex} where user_id=#{userId}
+    </update>
+
+    <update id="updateClassesByUserId">
+        update s_user set class_id=#{classId} where user_id=#{userId}
+    </update>
+
+    <update id="updatePass">
+        update s_user set password=#{password} where user_id=#{userId}
+    </update>
+
+    <update id="updatePassByUserId">
+        update s_user set password=#{userId} where user_id=#{userId}
+    </update>
+
+
+    <select id="selectUserIdIsnull" resultMap="userMap">
+        select * from s_user where user_id=#{userId}
+    </select>
+
+    <select id="selectStuByUserId" resultMap="userMap">
+        select * from s_user where role=3 and user_id=#{userId}
+    </select>
+
+    <select id="getUserAndClassesByname" resultMap="userAndClassesMap">
+        select <include refid="userAndClasses"/> from s_user left join s_classes on s_user.class_id=s_classes.class_id
+        where user_id=#{userId}
+    </select>
+
+    <select id="getUserList" resultMap="userMap">
+        select * from s_user
+    </select>
+
+    <select id="getHeadmasterList" resultMap="userMap">
+        SELECT username,class_id FROM s_user WHERE role=1 GROUP BY class_id
+    </select>
+
+    <select id="getHeadmaster" resultMap="userMap">
+        select username,class_id from s_user where role=1 and class_id=#{classId}
+    </select>
+
+    <select id="getTeacherList" resultMap="userMap">
+        select user_id,username from s_user where role=2 or role=1
+    </select>
+
+    <select id="getTeachersList" resultMap="userMap">
+        select user_id,username from s_user where role=2
+    </select>
+
+    <select id="getStuByClassId" resultMap="userMap">
+        select user_id,username,sex,password,question,answer from s_user where role=3 and class_id=#{classId}
+    </select>
+
+    <insert id="addUserList">
+        insert into s_user(username,password,role,sex,question,answer,class_id) values
+        (#{username},#{password},#{role},#{sex},#{question},#{answer},#{classId})
+    </insert>
+
+    <insert id="addUser">
+        insert into s_user(username,password,role,sex,class_id,question,answer) values
+        (#{username},#{password},#{role},#{sex},#{classId},#{question},#{answer})
+    </insert>
+
+    <select id="getUserByname" resultMap="userMap">
+        select * from s_user where username=#{username}
+    </select>
+
+    <update id="updateByafter">
+        update s_user set role=1,class_id=#{classId} where user_id=#{userId}
+    </update>
+
+    <update id="updateByBefore">
+        update s_user set role=2 where username=#{username}
+    </update>
+
+    <update id="updatePassword">
+        update s_user set password=#{password},question=#{question},answer=#{answer} where user_id=#{userId}
+    </update>
+
+
+
+
+</mapper>

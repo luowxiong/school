@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间 -->
+<mapper namespace="com.luowx.mapper.ClassesMapper">
+
+    <resultMap id="classesMap" type="Classes">
+        <id property="classId" column="cid"/>
+        <result property="className" column="class_name"/>
+        <result property="stuCount" column="stuCount"/>
+        <result property="headmaster" column="headmaster"/>
+        <collection property="user" ofType="User">
+            <id property="userId" column="user_id"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="role" column="role"/>
+            <result property="sex" column="sex"/>
+            <result property="question" column="question"/>
+            <result property="answer" column="answer"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+            <result property="classId" column="cid"/>
+        </collection>
+    </resultMap>
+
+    <select id="getClassesList" resultMap="classesMap">
+        SELECT s_user.class_id cid, class_name,COUNT(role) stuCount
+ FROM s_classes LEFT JOIN s_user ON s_classes.class_id=s_user.class_id WHERE role=3 GROUP BY s_classes.class_id
+    </select>
+
+    <select id="getClassesById" resultMap="classesMap">
+        select s_classes.class_id cid,class_name from s_classes where class_id=#{classId}
+    </select>
+
+    <update id="updateClassName">
+        update s_classes set class_name=#{className} where class_id=#{classId}
+    </update>
+
+    <select id="selectClassesList" resultMap="classesMap">
+        select s_classes.class_id cid,class_name from s_classes
+    </select>
+
+
+
+
+
+</mapper>

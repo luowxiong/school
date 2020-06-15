@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间 -->
+<mapper namespace="com.luowx.mapper.CourseMapper">
+
+    <resultMap id="courseMap" type="Course">
+        <id property="cId" column="c_id"/>
+        <result property="cno" column="cno"/>
+        <result property="cname" column="cname"/>
+        <result property="username" column="username"/>
+        <result property="schoolTime" column="school_time"/>
+        <result property="site" column="site"/>
+        <result property="semesters" column="semesters"/>
+    </resultMap>
+
+    <resultMap id="courseAndGradeMap" type="Course">
+        <id property="cId" column="c_id"/>
+        <result property="cno" column="cno"/>
+        <result property="cname" column="cname"/>
+        <result property="username" column="username"/>
+        <result property="schoolTime" column="school_time"/>
+        <result property="site" column="site"/>
+        <result property="semesters" column="semesters"/>
+        <association property="grade" javaType="Grade">
+            <id property="id" column="id"/>
+            <result property="cno" column="cno"/>
+            <result property="sno" column="sno"/>
+            <result property="userId" column="user_id"/>
+            <result property="username" column="username"/>
+            <result property="createTime" column="create_time"/>
+        </association>
+    </resultMap>
+
+    <select id="getCourseListById" resultMap="courseAndGradeMap">
+        select s_c.cno,cname,s_c.username,school_time,site,semesters from s_c left join s_grade on s_c.cno=s_grade.cno where user_id=#{userId}
+    </select>
+
+    <select id="getCourseList" resultMap="courseMap">
+        select * from s_c
+    </select>
+
+    <select id="getCourseByCno" resultMap="courseMap">
+        select * from s_c where cno=#{cno}
+    </select>
+
+    <select id="getCourseListByusername" resultMap="courseMap">
+        select * from s_c where username=#{username}
+    </select>
+
+    <delete id="deleteCourseByCno">
+        delete from s_c where cno=#{cno}
+    </delete>
+
+    <update id="updateByCid">
+        update s_c set cno=#{cno},cname=#{cname},username=#{username},school_time=#{schoolTime},site=#{site},semesters=#{semesters} where c_id=#{cId}
+    </update>
+
+    <insert id="saveCourse">
+        insert into s_c(cno,cname,username,school_time,site,semesters) values (#{cno},#{cname},#{username},#{schoolTime},#{site},#{semesters})
+    </insert>
+
+
+</mapper>

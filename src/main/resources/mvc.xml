@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+    <!-- 加载驱动 -->
+    <mvc:annotation-driven></mvc:annotation-driven>
+
+    <context:component-scan base-package="com.luowx.controller"></context:component-scan>
+
+    <!-- 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+    <!-- 上传文件支持 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
+
+    <mvc:interceptors>
+
+        <mvc:interceptor>
+            <!-- 配置拦截哪些地址 -->
+            <mvc:mapping path="/**"/>
+            <!-- 配置不拦截哪些地址 -->
+            <!-- 配置拦截器类 -->
+            <bean class="com.luowx.interceptor.RememberInterceptor"></bean>
+        </mvc:interceptor>
+
+        <mvc:interceptor>
+            <!-- 配置拦截哪些地址 -->
+            <mvc:mapping path="/*"/>
+            <!-- 配置不拦截哪些地址 -->
+            <mvc:exclude-mapping path="/login"/>
+            <mvc:exclude-mapping path="/getVerifyCode"/>
+            <mvc:exclude-mapping path="/getUserByname"/>
+            <mvc:exclude-mapping path="/forgotpass"/>
+            <mvc:exclude-mapping path="/selectUserIdIsnull"/>
+            <mvc:exclude-mapping path="/encrypted"/>
+            <mvc:exclude-mapping path="/selectAnswerById"/>
+
+            <!-- 配置拦截器类 -->
+            <bean class="com.luowx.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <mvc:default-servlet-handler/>
+    <mvc:resources location="/WEB-INF/pages/" mapping="/pages/**" />
+
+    <mvc:view-controller path="/register" view-name="register"/>
+    <mvc:view-controller path="/overview" view-name="overview"/>
+    <mvc:view-controller path="/student" view-name="student"/>
+    <mvc:view-controller path="/details" view-name="details"/>
+    <mvc:view-controller path="/teacher" view-name="teacher"/>
+    <mvc:view-controller path="/updatepass" view-name="updatepass"/>
+    <mvc:view-controller path="/excelfile" view-name="excelfile"/>
+    <mvc:view-controller path="/forgotpass" view-name="forgotpass"/>
+    <mvc:view-controller path="/encrypted" view-name="encrypted"/>
+    <mvc:view-controller path="/updatepassword" view-name="updatepassword"/>
+    <mvc:view-controller path="/score" view-name="score"/>
+    <mvc:view-controller path="/course" view-name="course"/>
+    <mvc:view-controller path="/addcourse" view-name="addcourse"/>
+    <mvc:view-controller path="/addgrade" view-name="addgrade"/>
+    <mvc:view-controller path="/teachercourse" view-name="teachercourse"/>
+    <mvc:view-controller path="/grade" view-name="grade"/>
+    <mvc:view-controller path="/test" view-name="test"/>
+
+</beans>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间 -->
+<mapper namespace="com.luowx.mapper.GradeMapper">
+
+    <resultMap id="gradeMap" type="Grade">
+        <id property="id" column="id"/>
+        <result property="cno" column="cno"/>
+        <result property="sno" column="sno"/>
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <resultMap id="gradeAndCourseMap" type="Grade">
+        <id property="id" column="id"/>
+        <result property="cno" column="cno"/>
+        <result property="sno" column="sno"/>
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="createTime" column="create_time"/>
+        <association property="course" javaType="Course">
+            <id property="cId" column="c_id"/>
+            <result property="cno" column="cno"/>
+            <result property="cname" column="cname"/>
+            <result property="username" column="username"/>
+            <result property="schoolTime" column="school_time"/>
+            <result property="site" column="site"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="gradeAndUserMap" type="Grade">
+        <id property="id" column="id"/>
+        <result property="cno" column="cno"/>
+        <result property="sno" column="sno"/>
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="createTime" column="create_time"/>
+        <association property="user" javaType="User">
+            <id property="userId" column="user_id"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="role" column="role"/>
+            <result property="sex" column="sex"/>
+            <result property="question" column="question"/>
+            <result property="answer" column="answer"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+            <result property="classId" column="class_id"/>
+        </association>
+    </resultMap>
+
+    <select id="getGrade" resultMap="gradeAndCourseMap">
+        select user_id,s_grade.username,s_c.username,cname,s_grade.cno,sno,create_time
+        from s_grade left join s_c on s_grade.cno=s_c.cno
+    </select>
+
+    <select id="getGradeList" resultMap="gradeAndCourseMap">
+        select user_id,s_grade.username,s_c.username,cname,s_grade.cno,sno,create_time
+        from s_grade left join s_c on s_grade.cno=s_c.cno
+        where 1=1
+        <if test="userId != null and userId != ''">
+            <![CDATA[and user_id=#{userId}]]>
+        </if>
+        <if test="username != null and username != ''">
+            <![CDATA[and s_grade.username=#{username}]]>
+        </if>
+        <if test="cno != null and cno != ''">
+            <![CDATA[and s_grade.cno=#{cno}]]>
+        </if>
+        <if test="startTime != null and startTime != ''">
+            <![CDATA[ and create_time  >=#{startTime}]]>
+        </if>
+        <if test="endTime != null and endTime != ''">
+            <![CDATA[ and create_time  <#{endTime}]]>
+        </if>
+    </select>
+
+    <select id="getGradeByUserId" resultMap="gradeAndCourseMap">
+        select cname,sno,s_c.username from s_grade left join s_c on s_grade.cno=s_c.cno where s_grade.user_id=#{userId}
+    </select>
+
+    <select id="getGradeListByCno" resultMap="gradeAndUserMap">
+        select s_grade.id,cno,sno,s_user.username from s_grade left join s_user on s_grade.user_id=s_user.user_id where cno=#{cno}
+    </select>
+
+    <insert id="saveGrade">
+        insert into s_grade(cno,sno,user_id,username) values (#{cno},#{sno},#{userId},#{username})
+    </insert>
+
+    <delete id="deleteById">
+        delete from s_grade where id=#{id}
+    </delete>
+
+
+
+
+</mapper>
